@@ -1,0 +1,29 @@
+{
+  "name": "@cardano-ogmios-examples/payment-notifier",
+  "version": "0.1.0",
+  "description": "Receive notifications upon receipt of payment",
+  "engines": {
+    "node": "^14"
+  },
+  "main": "dist/index.js",
+  "repository": "https://github.com/rhyslbw/cardano-ogmios-examples/packages/payment-notifier",
+  "author": "Rhys Bartels-Waller",
+  "license": "MPL-2.0",
+  "scripts": {
+    "build": "tsc --build ./src",
+    "cleanup": "shx rm -rf dist node_modules",
+    "dev": "API_PORT=3000 OGMIOS_HOST=localhost OGMIOS_PORT=1337 PUSHOVER_TOKEN_FILE=./secrets/pushover_token PUSHOVER_USER_FILE=./secrets/pushover_user ts-node-dev ./src/index.ts",
+    "lint": "eslint --ignore-path ../../.eslintignore \"**/*.ts\"",
+    "test": "shx echo No tests in this package"
+  },
+  "dependencies": {
+    "@cardano-ogmios/client": "^0.1.2",
+    "@stingalleman/pushover.js": "^1.1.2",
+    "body-parser": "^1.19.0",
+    "coingecko-api": "^1.0.10",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "shx": "^0.3.3"
+  }
+}

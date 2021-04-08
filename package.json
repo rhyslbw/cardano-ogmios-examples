@@ -1,0 +1,42 @@
+{
+  "name": "cardano-ogmios-examples",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript monorepo with Cardano Ogmios examples",
+  "engines": {
+    "node": "^14"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": "https://github.com/rhyslbw/cardano-ogmios-examples",
+  "author": "Rhys Bartels-Waller",
+  "license": "MPL-2.0",
+  "scripts": {
+    "build": "yarn workspaces run build",
+    "cleanup": "yarn workspaces run cleanup && shx rm -rf node_modules",
+    "lint": "yarn workspaces run lint",
+    "mainnet:up": "docker-compose -p ogmios-mainnet up",
+    "mainnet:down": "docker-compose -p ogmios-mainnet down",
+    "test": "yarn workspaces run test",
+    "testnet:up": "OGMIOS_PORT=1338 NETWORK=testnet docker-compose -p ogmios-testnet up",
+    "testnet:down": "docker-compose --project-directory ../.. -p ogmios-testnet down"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/node": "^14.14.32",
+    "@types/ws": "^7.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.17.0",
+    "@typescript-eslint/parser": "^4.17.0",
+    "eslint": "^7.22.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "eslint-watch": "^7.0.0",
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.2.3"
+  }
+}

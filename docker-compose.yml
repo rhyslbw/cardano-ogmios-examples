@@ -1,0 +1,50 @@
+version: "3.5"
+
+services:
+  cardano-node:
+    image: inputoutput/cardano-node:1.25.1
+    restart: on-failure
+    environment:
+      - NETWORK=${NETWORK:-mainnet}
+    volumes:
+      - node-db:/data
+      - node-ipc:/ipc
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "400k"
+        max-file: "20"
+  ogmios:
+    image: ktorz/ogmios:v3.1.0
+    restart: on-failure
+    environment:
+      - OGMIOS_NETWORK=${NETWORK:-mainnet}
+    command: ["--host", "0.0.0.0", "--node-socket", "/ipc/node.socket"]
+    volumes:
+      - node-ipc:/ipc
+    ports:
+      - ${OGMIOS_PORT:-1337}:1337
+  payment-notifier:
+    build:
+      context: .
+      target: payment-notifier
+    restart: always
+    environment:
+      - API_PORT=${API_PORT:-3000}
+      - OGMIOS_HOST=ogmios
+      - OGMIOS_PORT=1337
+      - PUSHOVER_TOKEN_FILE=/run/secrets/pushover_token
+      - PUSHOVER_USER_FILE=/run/secrets/pushover_user
+    ports:
+      - ${API_PORT:-3000}:3000
+    secrets:
+      - pushover_token
+      - pushover_user
+secrets:
+  pushover_token:
+    file: ./packages/payment-notifier/secrets/pushover_token
+  pushover_user:
+    file: ./packages/payment-notifier/secrets/pushover_user
+volumes:
+  node-db:
+  node-ipc:
