@@ -21,6 +21,7 @@ import fs from 'fs'
   app.use(bodyParser.json())
   app.post('/start', async (req, res) => {
     await service.start(req.body.addresses)
+    console.log(`Notifying of payments made to ${req.body.addresses.join(', ')}`)
     res.sendStatus(200)
   })
   app.post('/shutdown', async (_req, res) => {
