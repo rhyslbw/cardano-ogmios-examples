@@ -36,6 +36,10 @@ RUN curl --proto '=https' --tlsv1.2 -sSf -L https://www.postgresql.org/media/key
   ca-certificates
 
 FROM runtime as payment-notifier
+ENV \
+  OGMIOS_HOST="cardano-node-ogmios" \
+  PUSHOVER_TOKEN_FILE=/run/secrets/pushover_token \
+  PUSHOVER_USER_FILE=/run/secrets/pushover_user
 COPY --from=ts-builder /app/packages/payment-notifier/dist /app/packages/payment-notifier/dist
 COPY --from=ts-builder /app/packages/payment-notifier/package.json /app/packages/payment-notifier/package.json
 COPY --from=production-deps /app/node_modules /app/node_modules
