@@ -29,11 +29,13 @@ RUN yarn --offline --frozen-lockfile --non-interactive &&\
 FROM nodejs-builder as production-deps
 RUN yarn --offline --frozen-lockfile --non-interactive --production
 
-FROM ubuntu-nodejs as payment-notifier
+FROM ubuntu-nodejs as runtime
 RUN curl --proto '=https' --tlsv1.2 -sSf -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&\
   echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list &&\
   apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates
+
+FROM runtime as payment-notifier
 COPY --from=ts-builder /app/packages/payment-notifier/dist /app/packages/payment-notifier/dist
 COPY --from=ts-builder /app/packages/payment-notifier/package.json /app/packages/payment-notifier/package.json
 COPY --from=production-deps /app/node_modules /app/node_modules
