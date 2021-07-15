@@ -7,6 +7,7 @@ import {
 } from './service'
 
 (async () => {
+  const apiPort = process.env.API_PORT || 3000
   const app = express()
   app.use(bodyParser.json())
   let service: PaymentNotifierService
@@ -15,7 +16,7 @@ import {
       req.body.addresses,
       {
         host: process.env.OGMIOS_HOST,
-        port: parseInt(process.env.OGMIOS_PORT)
+        port: process.env.OGMIOS_PORT ? parseInt(process.env.OGMIOS_PORT) : undefined
       }, {
         notifications: {
           pushover: {
@@ -35,7 +36,7 @@ import {
     res.sendStatus(200)
   })
 
-  app.listen(3000, () => {
-    console.log(`Payment Notifier service listening at http://localhost:${process.env.API_PORT}`)
+  app.listen(apiPort, () => {
+    console.log(`Payment Notifier service listening at http://localhost:${apiPort}`)
   })
 })()
