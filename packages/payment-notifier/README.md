@@ -6,6 +6,7 @@ import { createPaymentNotifierService } from '@cardano-ogmios-examples/payment-n
 import onDeath from 'death'
 
 createPaymentNotifierService(
+  ['addr...'],
   {
     host: 'localhost',
     port: 1338
@@ -21,7 +22,7 @@ createPaymentNotifierService(
     }
   }
 ).then(service => {
-  service.start(['addr...']).catch(error => console.error(error))
+  service.start().catch(error => console.error(error))
   onDeath(service.shutdown)
 })
 ```

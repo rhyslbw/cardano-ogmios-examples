@@ -1,26 +1,32 @@
 import bodyParser from 'body-parser'
 import express from 'express'
-import { createPaymentNotifierService } from './service'
 import fs from 'fs'
+import {
+  createPaymentNotifierService,
+  PaymentNotifierService
+} from './service'
 
 (async () => {
   const app = express()
-  const service = await createPaymentNotifierService({
-    host: process.env.OGMIOS_HOST,
-    port: parseInt(process.env.OGMIOS_PORT)
-  }, {
-    notifications: {
-      pushover: {
-        credentials: {
-          token: fs.readFileSync(process.env.PUSHOVER_TOKEN_FILE).toString(),
-          user: fs.readFileSync(process.env.PUSHOVER_USER_FILE).toString()
-        }
-      }
-    }
-  })
   app.use(bodyParser.json())
+  let service: PaymentNotifierService
   app.post('/start', async (req, res) => {
-    await service.start(req.body.addresses)
+    service = await createPaymentNotifierService(
+      req.body.addresses,
+      {
+        host: process.env.OGMIOS_HOST,
+        port: parseInt(process.env.OGMIOS_PORT)
+      }, {
+        notifications: {
+          pushover: {
+            credentials: {
+              token: fs.readFileSync(process.env.PUSHOVER_TOKEN_FILE).toString(),
+              user: fs.readFileSync(process.env.PUSHOVER_USER_FILE).toString()
+            }
+          }
+        }
+      })
+    await service.start()
     console.log(`Notifying of payments made to ${req.body.addresses.join(', ')}`)
     res.sendStatus(200)
   })
