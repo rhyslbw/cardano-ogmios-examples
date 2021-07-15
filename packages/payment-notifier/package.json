@@ -14,6 +14,10 @@
     "cleanup": "shx rm -rf dist node_modules",
     "dev": "API_PORT=3000 OGMIOS_HOST=localhost OGMIOS_PORT=1337 PUSHOVER_TOKEN_FILE=./secrets/pushover_token PUSHOVER_USER_FILE=./secrets/pushover_user ts-node-dev ./src/index.ts",
     "lint": "eslint --ignore-path ../../.eslintignore \"**/*.ts\"",
+    "mainnet:up": "docker-compose -p mainnet_payment-notifier up",
+    "mainnet:down": "docker-compose -p mainnet_payment-notifier down",
+    "testnet:up": "NETWORK=testnet docker-compose -p testnet_payment-notifier up",
+    "testnet:down": "NETWORK=testnet docker-compose -p testnet_payment-notifier down",
     "test": "shx echo No tests in this package"
   },
   "dependencies": {
