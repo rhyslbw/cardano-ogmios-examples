@@ -25,11 +25,11 @@ COPY \
   /app/
 
 FROM nodejs-builder as typescript-builder
-RUN yarn --offline --frozen-lockfile --non-interactive &&\
+RUN yarn --frozen-lockfile --non-interactive &&\
    yarn build
 
 FROM nodejs-builder as cli-production-deps
-RUN yarn --offline --frozen-lockfile --non-interactive --production
+RUN yarn --frozen-lockfile --non-interactive --production
 
 FROM ubuntu-nodejs
 COPY --from=typescript-builder /app/packages/common/dist /app/packages/common/dist

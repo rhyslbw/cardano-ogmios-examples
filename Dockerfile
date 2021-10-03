@@ -13,21 +13,19 @@ RUN curl --proto '=https' --tlsv1.2 -sSf -L https://dl.yarnpkg.com/debian/pubkey
   apt-get update && apt-get install gcc g++ make gnupg2 yarn -y
 RUN mkdir -p /app/packages
 WORKDIR /app
-COPY packages-cache packages-cache
 COPY packages/payment-notifier packages/payment-notifier
 COPY \
-  .yarnrc \
   package.json \
   yarn.lock \
   tsconfig.json \
   /app/
 
 FROM nodejs-builder as ts-builder
-RUN yarn --offline --frozen-lockfile --non-interactive &&\
+RUN yarn --frozen-lockfile --non-interactive &&\
    yarn build
 
 FROM nodejs-builder as production-deps
-RUN yarn --offline --frozen-lockfile --non-interactive --production
+RUN yarn --frozen-lockfile --non-interactive --production
 
 FROM ubuntu-nodejs as runtime
 RUN curl --proto '=https' --tlsv1.2 -sSf -L https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&\
