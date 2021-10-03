@@ -12,16 +12,17 @@
   "scripts": {
     "build": "tsc --build ./src",
     "cleanup": "shx rm -rf dist node_modules",
-    "dev": "API_PORT=3000 OGMIOS_HOST=localhost OGMIOS_PORT=1337 PUSHOVER_TOKEN_FILE=./secrets/pushover_token PUSHOVER_USER_FILE=./secrets/pushover_user ts-node-dev ./src/index.ts",
+    "dev": "API_PORT=3000 OGMIOS_HOST=localhost PUSHOVER_TOKEN_FILE=./secrets/pushover_token PUSHOVER_USER_FILE=./secrets/pushover_user ts-node-dev ./src/index.ts",
+    "dev:testnet": "API_PORT=3000 OGMIOS_HOST=localhost OGMIOS_PORT=1338 PUSHOVER_TOKEN_FILE=./secrets/pushover_token PUSHOVER_USER_FILE=./secrets/pushover_user ts-node-dev ./src/index.ts",
     "lint": "eslint --ignore-path ../../.eslintignore \"**/*.ts\"",
     "mainnet:up": "docker-compose -p mainnet_payment-notifier up",
     "mainnet:down": "docker-compose -p mainnet_payment-notifier down",
-    "testnet:up": "NETWORK=testnet docker-compose -p testnet_payment-notifier up",
-    "testnet:down": "NETWORK=testnet docker-compose -p testnet_payment-notifier down",
+    "testnet:up": "NETWORK=testnet OGMIOS_PORT=1338 docker-compose -p testnet_payment-notifier up",
+    "testnet:down": "docker-compose -p testnet_payment-notifier down",
     "test": "shx echo No tests in this package"
   },
   "dependencies": {
-    "@cardano-ogmios/client": "^4.0.0-beta.5",
+    "@cardano-ogmios/client": "^4.1.0",
     "@stingalleman/pushover.js": "^1.1.2",
     "body-parser": "^1.19.0",
     "coingecko-api": "^1.0.10",

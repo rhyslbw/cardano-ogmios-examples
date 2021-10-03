@@ -29,23 +29,63 @@ createPaymentNotifierService(
 
 ## Web Service
 
-### Build and run with Docker
+### Build and Run via Docker Compose
 1. Create two text files with Pushover credentials in `./secrets`
    - `pushover_token`
    - `pushover_user`
 2. From the top-level of this repository:
-```console
+
+<details open>
+  <summary><i>mainnet</i></summary>
+
+``` console
 yarn mainnet:up
-# Alias for
-docker-compose -p ogmios-mainnet up
+# OR
+docker-compose -p mainnet_payment-notifier up
 ```
+</details>
+
+<details>
+  <summary><i>testnet</i></summary>
+
+``` console
+yarn testnet:up
+# OR
+NETWORK=testnet OGMIOS_PORT=1338 docker-compose -p testnet_payment-notifier up
+```
+</details>
+
+
 :information_source: _Override the `API_PORT` env if you have a clash on `3000`_
+
+### Down
+
+<details open>
+  <summary><i>mainnet</i></summary>
+
+``` console
+yarn mainnet:down
+# OR
+docker-compose -p mainnet_payment-notifier down
+```
+</details>
+
+<details>
+  <summary><i>testnet</i></summary>
+
+``` console
+yarn testnet:down
+# OR
+docker-compose -p testnet_payment-notifier down
+```
+</details>
+
 ### Build with yarn
 ```console
 yarn build
 ```
 
-### Config
+### Service Config
 - `API_PORT`
 - `OGMIOS_HOST`
 - `OGMIOS_PORT`
@@ -60,8 +100,7 @@ yarn build
 ### Endpoints
 #### Start
 ```console
-curl -X POST http://localhost:3000/start -H 'Content-Type: application/json' -d '{"addresses": 
-["addr..."]}'
+curl -X POST http://localhost:3000/start -H 'Content-Type: application/json' -d '{"addresses": ["addr_test1qq585l3hyxgj3nas2v3xymd23vvartfhceme6gv98aaeg9muzcjqw982pcftgx53fu5527z2cj2tkx2h8ux2vxsg475q2g7k3g"]}'
 ```
 #### Shutdown
 ```console

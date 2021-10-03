@@ -1,7 +1,9 @@
 import {
   ConnectionConfig,
   createChainSyncClient,
+  createInteractionContext,
   isAllegraBlock,
+  isAlonzoBlock,
   isMaryBlock,
   isShelleyBlock,
   Schema
@@ -33,36 +35,48 @@ export async function createPaymentNotifierService (
     }
   }
 ): Promise<PaymentNotifierService> {
-  const chainSyncClient = await createChainSyncClient({
-    rollBackward: async ({ point }) => {
-      console.log('Rollback to point', point)
+  const context = await createInteractionContext(
+    console.error,
+    (code, reason) => {
+      console.log(code, reason),
+        {
+          connection,
+          interactionType: 'LongRunning'
+        }
     },
-    rollForward: async ({ block }) => {
-      let b: Schema.BlockShelley | Schema.BlockAllegra | Schema.BlockMary
-      if (isShelleyBlock(block)) {
-        b = block.shelley as Schema.BlockShelley
-      } else if (isAllegraBlock(block)) {
-        b = block.allegra as Schema.BlockAllegra
-      } else if (isMaryBlock(block)) {
-        b = block.mary as Schema.BlockMary
-      }
-      if (b !== undefined) {
-        for (const tx of b.body) {
-          for (const output of tx.body.outputs) {
-            if (addresses.includes(output.address)) {
-              await notifications.send(
-                `Payment received. Current ada value ${await fetchAdaPrice()}`,
-                'Ada payment received'
-              )
+  )
+  const chainSyncClient = await createChainSyncClient(
+    context,
+    {
+      rollBackward: async ({ point }) => {
+        console.log('Rollback to point', point)
+      },
+      rollForward: async ({ block }) => {
+        let b: Schema.BlockShelley | Schema.BlockAllegra | Schema.BlockMary | Schema.BlockAlonzo
+        if (isShelleyBlock(block)) {
+          b = block.shelley as Schema.BlockShelley
+        } else if (isAllegraBlock(block)) {
+          b = block.allegra as Schema.BlockAllegra
+        } else if (isMaryBlock(block)) {
+          b = block.mary as Schema.BlockMary
+        } else if (isAlonzoBlock(block)) {
+          b = block.alonzo as Schema.BlockAlonzo
+        }
+        if (b !== undefined) {
+          for (const tx of b.body) {
+            for (const output of tx.body.outputs) {
+              if (addresses.includes(output.address)) {
+                await notifications.send(
+                  `Payment received. Current ada value ${await fetchAdaPrice()}`,
+                  'Ada payment received'
+                )
+              }
             }
           }
         }
       }
     }
-  },
-  console.error,
-  console.log,
-  { connection })
+  )
   let notifications: NotificationClient
   if (options?.notifications?.pushover) {
     notifications = createPushoverClient(options.notifications.pushover.credentials)
